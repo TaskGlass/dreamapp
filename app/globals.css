@@ -754,3 +754,123 @@ footer {
     scroll-behavior: auto !important;
   }
 }
+
+/* Add these styles to the end of the file to enhance the calendar appearance */
+
+/* Enhanced calendar styling */
+.rdp {
+  --rdp-cell-size: 40px !important;
+  --rdp-accent-color: theme("colors.dream.purple") !important;
+  --rdp-background-color: theme("colors.dream.dark-blue") !important;
+  margin: 0 !important;
+}
+
+.rdp-months {
+  justify-content: center !important;
+}
+
+.rdp-month {
+  background-color: transparent !important;
+  border-radius: 8px !important;
+}
+
+.rdp-table {
+  margin: 0 auto !important;
+  max-width: 100% !important;
+}
+
+.rdp-head_cell {
+  font-weight: 500 !important;
+  color: theme("colors.white") !important;
+  text-transform: uppercase !important;
+  font-size: 0.8rem !important;
+  padding: 0.75rem 0 !important;
+  text-align: center !important;
+}
+
+.rdp-cell {
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+.rdp-day {
+  margin: auto !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.rdp-day:hover {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+}
+
+.rdp-day_selected {
+  background-color: theme("colors.dream.purple") !important;
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+.rdp-day_today {
+  border: 1px solid theme("colors.dream.blue") !important;
+  background-color: rgba(99, 102, 241, 0.2) !important;
+  font-weight: bold !important;
+}
+
+.rdp-button:hover:not([disabled]) {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+}
+
+.rdp-nav_button {
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 0.5rem !important;
+}
+
+.rdp-caption_label {
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  color: white !important;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .rdp {
+    --rdp-cell-size: 48px !important;
+  }
+
+  .rdp-head_cell {
+    font-size: 0.9rem !important;
+    padding: 1rem 0 !important;
+  }
+
+  .rdp-caption_label {
+    font-size: 1.1rem !important;
+  }
+
+  .rdp-nav_button {
+    padding: 0.75rem !important;
+  }
+}
+
+/* Add these styles to fix the footer positioning */
+
+/* Fix footer positioning to prevent empty space below */
+.h-screen.overflow-auto {
+  display: flex;
+  flex-direction: column;
+}
+
+.h-screen.overflow-auto > main {
+  flex: 1 0 auto;
+}
+
+.h-screen.overflow-auto > footer {
+  flex-shrink: 0;
+}
+
+/* Remove any bottom margin from the last element in the main content */
+main > *:last-child {
+  margin-bottom: 0;
+}

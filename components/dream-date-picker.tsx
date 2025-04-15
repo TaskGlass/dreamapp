@@ -1,40 +1,24 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { format } from "date-fns"
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { CalendarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export function DreamDatePicker({ date, onDateChange }) {
   const [selectedDate, setSelectedDate] = useState(date || new Date())
-  const [isOpen, setIsOpen] = useState(false)
-  const [isMobileDialogOpen, setIsMobileDialogOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const triggerRef = useRef(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const isMobile = useIsMobile()
 
-  // Check if we're on mobile
   useEffect(() => {
-    const checkMobile = () => {
-      const mobile = window.innerWidth < 768
-      setIsMobile(mobile)
-
-      // Close popover when switching to mobile
-      if (mobile && isOpen) {
-        setIsOpen(false)
-      }
+    if (date) {
+      setSelectedDate(date)
     }
-
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-
-    return () => {
-      window.removeEventListener("resize", checkMobile)
-    }
-  }, [isOpen])
+  }, [date])
 
   const handleDateSelect = (date) => {
     if (!date) return
@@ -42,142 +26,112 @@ export function DreamDatePicker({ date, onDateChange }) {
     setSelectedDate(date)
     onDateChange(date)
 
-    // Close the appropriate UI component
-    if (isMobile) {
-      setIsMobileDialogOpen(false)
-    } else {
-      setIsOpen(false)
+    // Close dialog if open
+    if (isDialogOpen) {
+      setIsDialogOpen(false)
     }
   }
 
-  const handleOpenChange = (open) => {
-    if (isMobile) {
-      if (open) {
-        setIsMobileDialogOpen(true)
-      }
-      return
-    }
-    setIsOpen(open)
+  const formatDisplayDate = (date) => {
+    return format(date, "MMMM d, yyyy")
   }
 
-  const openDatePicker = () => {
-    if (isMobile) {
-      setIsMobileDialogOpen(true)
-    } else {
-      setIsOpen(true)
-    }
+  // Custom calendar styles for better spacing and appearance
+  const calendarClassNames = {
+    day_selected: "bg-dream-purple text-white hover:bg-dream-purple/90 font-medium",
+    day_today: "bg-dream-blue/30 text-white font-bold border border-dream-blue",
+    day: "text-white hover:bg-dream-purple/20 font-normal aria-selected:opacity-100 rounded-md focus:bg-dream-purple/30 focus:ring-2 focus:ring-dream-purple focus:ring-offset-2 focus:ring-offset-dream-dark-blue",
+    head_cell: "text-white font-medium text-sm py-2",
+    caption: "text-white text-base font-bold py-2",
+    nav_button: "text-white hover:bg-dream-purple/20 p-1 rounded-md",
+    table: "border-collapse space-y-2",
+    cell: "p-0 relative [&:has([aria-selected])]:bg-dream-purple/10 text-center",
+    button: "p-0 font-normal aria-selected:opacity-100 w-full h-full",
+    nav: "space-x-2 flex items-center py-2",
+    caption_label: "text-base font-bold",
+    months: "space-y-4 px-1.5",
+  }
+
+  // Mobile-specific calendar styles
+  const mobileCalendarClassNames = {
+    ...calendarClassNames,
+    day: "text-white hover:bg-dream-purple/20 font-normal aria-selected:opacity-100 rounded-md focus:bg-dream-purple/30 focus:ring-2 focus:ring-dream-purple focus:ring-offset-2 focus:ring-offset-dream-dark-blue",
+    head_cell: "text-white font-medium text-base py-3",
+    caption: "text-white text-lg font-bold py-3",
+    nav_button: "text-white hover:bg-dream-purple/20 p-2 rounded-md",
   }
 
   return (
     <div className="w-full">
-      {/* Desktop popover version */}
-      <Popover open={isOpen && !isMobile} onOpenChange={handleOpenChange}>
-        <PopoverTrigger asChild>
+      {isMobile ? (
+        // Mobile version - Dialog
+        <>
           <Button
-            ref={triggerRef}
             variant="outline"
-            onClick={openDatePicker}
-            className={cn(
-              "w-full justify-start text-left font-normal glass-input",
-              !date && "text-white",
-              "relative h-12 md:h-10", // Taller on mobile for easier tapping
-            )}
+            onClick={() => setIsDialogOpen(true)}
+            className="w-full justify-start text-left font-normal glass-input h-12 relative"
           >
             <CalendarIcon className="mr-3 h-5 w-5 text-dream-purple" />
-            {selectedDate ? (
-              <span className="text-white">{format(selectedDate, "PPP")}</span>
-            ) : (
-              <span className="text-white/70">Select date</span>
-            )}
+            <span className="text-white">{formatDisplayDate(selectedDate)}</span>
           </Button>
-        </PopoverTrigger>
-        <PopoverContent className="p-0 bg-dream-dark-blue border border-dream-glass-border w-auto" align="start">
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={handleDateSelect}
-            initialFocus
-            className="bg-dream-dark-blue rounded-md"
-            classNames={{
-              day_selected: "bg-dream-purple text-white hover:bg-dream-purple/90",
-              day_today: "bg-dream-blue/30 text-white font-bold",
-              day: "text-white hover:bg-dream-purple/20 h-9 w-9 p-0 font-normal aria-selected:opacity-100",
-              head_cell: "text-white font-medium",
-              caption: "text-white",
-              nav_button: "text-white hover:bg-dream-purple/20",
-              table: "border-collapse space-y-1",
-              cell: "p-0 relative [&:has([aria-selected])]:bg-dream-purple/10",
-              button: "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
-              nav: "space-x-1 flex items-center",
-              caption_label: "text-base font-medium",
-              months: "space-y-4 p-3",
-            }}
-            components={{
-              IconLeft: () => <ChevronLeftIcon className="h-4 w-4" />,
-              IconRight: () => <ChevronRightIcon className="h-4 w-4" />,
-            }}
-          />
-        </PopoverContent>
-      </Popover>
 
-      {/* Mobile dialog version */}
-      <Dialog open={isMobileDialogOpen} onOpenChange={setIsMobileDialogOpen}>
-        <Button
-          variant="outline"
-          onClick={() => setIsMobileDialogOpen(true)}
-          className={cn(
-            "w-full justify-start text-left font-normal glass-input md:hidden",
-            !date && "text-white",
-            "relative h-12", // Taller on mobile for easier tapping
-          )}
-        >
-          <CalendarIcon className="mr-3 h-5 w-5 text-dream-purple" />
-          {selectedDate ? (
-            <span className="text-white">{format(selectedDate, "PPP")}</span>
-          ) : (
-            <span className="text-white/70">Select date</span>
-          )}
-        </Button>
-        <DialogContent className="bg-dream-dark-blue border border-dream-glass-border p-0 sm:max-w-[425px]">
-          <DialogHeader className="p-4 border-b border-dream-glass-border">
-            <DialogTitle className="text-white text-center">Select Date</DialogTitle>
-          </DialogHeader>
-          <div className="p-4">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogContent className="bg-dream-dark-blue border border-dream-glass-border p-4 sm:max-w-[425px]">
+              <DialogHeader className="pb-2 border-b border-dream-glass-border">
+                <DialogTitle className="text-white text-center text-lg">Select Date</DialogTitle>
+              </DialogHeader>
+
+              <div className="py-4">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={handleDateSelect}
+                  className="mx-auto bg-transparent"
+                  classNames={mobileCalendarClassNames}
+                  styles={{
+                    head_cell: { width: "48px", height: "40px" },
+                    day: { width: "48px", height: "48px" },
+                    caption: { marginBottom: "8px" },
+                    table: { margin: "0 auto" },
+                  }}
+                />
+              </div>
+
+              <DialogFooter className="pt-2 border-t border-dream-glass-border">
+                <Button className="glass-button-primary w-full" onClick={() => setIsDialogOpen(false)}>
+                  Done
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      ) : (
+        // Desktop version - Popover
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full justify-start text-left font-normal glass-input">
+              <CalendarIcon className="mr-3 h-5 w-5 text-dream-purple" />
+              <span className="text-white">{formatDisplayDate(selectedDate)}</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="p-3 bg-dream-dark-blue border border-dream-glass-border w-auto" align="start">
             <Calendar
               mode="single"
               selected={selectedDate}
               onSelect={handleDateSelect}
-              className="bg-dream-dark-blue mx-auto"
-              classNames={{
-                day_selected: "bg-dream-purple text-white hover:bg-dream-purple/90",
-                day_today: "bg-dream-blue/30 text-white font-bold",
-                day: "text-white hover:bg-dream-purple/20 h-12 w-12 p-0 font-normal aria-selected:opacity-100 text-lg",
-                head_cell: "text-white font-medium text-base",
-                caption: "text-white text-lg",
-                nav_button: "text-white hover:bg-dream-purple/20 h-10 w-10",
-                table: "border-collapse space-y-2",
-                cell: "p-0 relative [&:has([aria-selected])]:bg-dream-purple/10",
-                button: "h-12 w-12 p-0 font-normal aria-selected:opacity-100",
-                nav: "space-x-1 flex items-center",
-                caption_label: "text-lg font-medium",
-                months: "space-y-4",
-              }}
-              components={{
-                IconLeft: () => <ChevronLeftIcon className="h-6 w-6" />,
-                IconRight: () => <ChevronRightIcon className="h-6 w-6" />,
+              initialFocus
+              className="bg-transparent"
+              classNames={calendarClassNames}
+              styles={{
+                head_cell: { width: "40px", height: "32px" },
+                day: { width: "40px", height: "40px" },
+                caption: { marginBottom: "8px" },
+                table: { margin: "0 auto" },
               }}
             />
-          </div>
-          <div className="p-4 border-t border-dream-glass-border flex justify-between">
-            <Button variant="outline" className="glass-button" onClick={() => setIsMobileDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button className="glass-button-primary" onClick={() => handleDateSelect(selectedDate)}>
-              Select
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </PopoverContent>
+        </Popover>
+      )}
     </div>
   )
 }

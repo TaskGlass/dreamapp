@@ -192,7 +192,7 @@ export default function PublicInterpretPage() {
   }
 
   return (
-    <div className="min-h-screen dream-bg">
+    <div className="h-screen overflow-auto dream-bg">
       {/* Glow blobs - reduced for better performance */}
       <div className="glow-blob glow-blob-1 animate-pulse-glow"></div>
       <div className="glow-blob glow-blob-2 animate-pulse-glow"></div>
