@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -11,15 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 export function DreamDatePicker({ date, onDateChange }) {
   const [selectedDate, setSelectedDate] = useState(date || new Date())
 
-  // Update component if date prop changes
-  useEffect(() => {
-    if (date && date.toString() !== selectedDate.toString()) {
-      setSelectedDate(date)
-    }
-  }, [date])
-
   const handleDateSelect = (date) => {
-    if (!date) return
     setSelectedDate(date)
     onDateChange(date)
   }
@@ -30,13 +22,14 @@ export function DreamDatePicker({ date, onDateChange }) {
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className={cn(
-              "w-full justify-start text-left font-normal glass-input",
-              !selectedDate && "text-muted-foreground",
-            )}
+            className={cn("w-full justify-start text-left font-normal glass-input", !date && "text-white")}
           >
-            <CalendarIcon className="mr-2 h-4 w-4 text-dream-purple" />
-            {selectedDate ? format(selectedDate, "PPP") : <span className="text-gray-400">Select date</span>}
+            <CalendarIcon className="mr-3 h-4 w-4 text-dream-purple" />
+            {selectedDate ? (
+              <span className="text-white">{format(selectedDate, "PPP")}</span>
+            ) : (
+              <span className="text-white/70">Select date</span>
+            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0 bg-dream-dark-blue border border-dream-glass-border">
@@ -45,15 +38,14 @@ export function DreamDatePicker({ date, onDateChange }) {
             selected={selectedDate}
             onSelect={handleDateSelect}
             initialFocus
-            className="dream-calendar bg-dream-dark-blue"
+            className="bg-dream-dark-blue"
             classNames={{
               day_selected: "bg-dream-purple text-white",
-              day_today: "bg-dream-blue/30 text-white font-bold",
+              day_today: "bg-dream-blue text-white",
               day: "text-white hover:bg-dream-purple/20",
+              head_cell: "text-white",
               caption: "text-white",
               nav_button: "text-white hover:bg-dream-purple/20",
-              head_cell: "text-gray-400 font-medium",
-              table: "border-dream-glass-border",
             }}
           />
         </PopoverContent>

@@ -10,13 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, SparklesIcon, MoonIcon, ArrowRightIcon, AlertCircle } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { DreamDatePicker } from "@/components/dream-date-picker"
-import { DreamProgressBar } from "@/components/dream-progress-bar"
 
 export default function PublicInterpretPage() {
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [interpretation, setInterpretation] = useState(null)
   const [interpretationSource, setInterpretationSource] = useState(null)
+  const [progress, setProgress] = useState(0)
   const [errors, setErrors] = useState({
     title: "",
     content: "",
@@ -29,6 +29,21 @@ export default function PublicInterpretPage() {
     emotion: "",
     clarity: "medium",
   })
+
+  // Progress bar animation
+  const startProgressAnimation = () => {
+    setProgress(0)
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 90) {
+          clearInterval(interval)
+          return prev
+        }
+        return prev + 10
+      })
+    }, 500)
+    return interval
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -97,6 +112,7 @@ export default function PublicInterpretPage() {
 
     setIsSubmitting(true)
     setInterpretation(null)
+    const progressInterval = startProgressAnimation()
 
     try {
       // Call the API to interpret the dream
@@ -118,7 +134,10 @@ export default function PublicInterpretPage() {
 
       const data = await response.json()
 
-      // Complete the progress bar by setting isSubmitting to false after a short delay
+      // Complete the progress bar
+      clearInterval(progressInterval)
+      setProgress(100)
+
       setTimeout(() => {
         setInterpretation(data.interpretation)
         setInterpretationSource(data.source)
@@ -140,6 +159,8 @@ export default function PublicInterpretPage() {
       })
 
       setIsSubmitting(false)
+      clearInterval(progressInterval)
+      setProgress(0)
     }
   }
 
@@ -152,7 +173,7 @@ export default function PublicInterpretPage() {
       <div className="glow-blob glow-blob-4 animate-pulse-glow"></div>
 
       <header className="relative z-10 py-6 border-b border-dream-glass-border backdrop-blur-md bg-dream-card-bg sticky top-0">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-6">
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center">
               <SparklesIcon className="h-5 w-5 text-dream-purple mr-2" />
@@ -172,19 +193,19 @@ export default function PublicInterpretPage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-12 relative z-10">
+      <main className="container mx-auto px-6 py-16 relative z-10">
         {interpretation ? (
-          <div className="space-y-8 max-w-4xl mx-auto">
-            <div className="text-center mb-8">
+          <div className="space-y-10 max-w-4xl mx-auto">
+            <div className="text-center mb-10">
               <div>
-                <SparklesIcon className="h-12 w-12 text-dream-purple mx-auto mb-4" />
+                <SparklesIcon className="h-12 w-12 text-dream-purple mx-auto mb-6" />
               </div>
-              <h1 className="text-4xl font-bold gradient-text mb-2">Your Dream Interpretation</h1>
-              <p className="text-gray-400 text-lg">Insights into your subconscious mind</p>
+              <h1 className="text-4xl font-bold gradient-text mb-4">Your Dream Interpretation</h1>
+              <p className="text-white text-lg">Insights into your subconscious mind</p>
             </div>
 
-            <div className="glass-card p-8 border-dream-purple">
-              <div className="flex justify-between items-start mb-6">
+            <div className="glass-card p-10 border-dream-purple">
+              <div className="flex justify-between items-start mb-8">
                 <h2 className="text-2xl font-bold gradient-text">{dreamData.title}</h2>
                 <Button variant="outline" className="glass-button" onClick={() => setInterpretation(null)}>
                   <MoonIcon className="mr-2 h-4 w-4" />
@@ -192,56 +213,56 @@ export default function PublicInterpretPage() {
                 </Button>
               </div>
 
-              <div className="mb-8 p-6 bg-dream-card-bg rounded-lg border border-dream-glass-border">
-                <h3 className="text-lg font-medium text-white mb-3">Your Dream</h3>
-                <p className="text-gray-300 whitespace-pre-line">{dreamData.content}</p>
-                <div className="mt-4 flex items-center gap-2">
-                  <span className="px-2 py-1 text-xs rounded-full bg-gray-700/50 text-gray-300 border border-gray-600">
+              <div className="mb-10 p-8 bg-dream-dark rounded-lg border border-dream-glass-border">
+                <h3 className="text-lg font-medium text-white mb-4">Your Dream</h3>
+                <p className="text-white whitespace-pre-line leading-relaxed">{dreamData.content}</p>
+                <div className="mt-6 flex items-center gap-2">
+                  <span className="px-3 py-1 text-xs rounded-full bg-dream-purple/30 text-white border border-dream-purple/30">
                     {interpretationSource === "openai" ? "AI Analysis" : "Dream Analysis"}
                   </span>
                 </div>
               </div>
 
-              <div className="space-y-8">
+              <div className="space-y-10">
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-4">Interpretation</h3>
-                  <p className="text-gray-100 whitespace-pre-line">{interpretation.interpretation}</p>
+                  <h3 className="text-xl font-bold text-white mb-6">Interpretation</h3>
+                  <p className="text-white whitespace-pre-line leading-relaxed">{interpretation.interpretation}</p>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-4">Key Symbols</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <h3 className="text-xl font-bold text-white mb-6">Key Symbols</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {interpretation.symbols.map((symbol, index) => (
-                      <div key={index} className="glass-card p-4">
-                        <h4 className="font-medium text-dream-blue mb-2">{symbol.name}</h4>
-                        <p className="text-gray-100">{symbol.meaning}</p>
+                      <div key={index} className="glass-card p-6 bg-dream-dark-blue">
+                        <h4 className="font-medium text-dream-blue mb-3">{symbol.name}</h4>
+                        <p className="text-white leading-relaxed">{symbol.meaning}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-4">Recommended Actions</h3>
-                  <ul className="space-y-4">
+                  <h3 className="text-xl font-bold text-white mb-6">Recommended Actions</h3>
+                  <ul className="space-y-5">
                     {interpretation.actions.map((action, index) => (
                       <li key={index} className="flex items-start">
-                        <div className="bg-dream-pink bg-opacity-20 p-1.5 rounded-full mr-3 mt-1">
+                        <div className="bg-dream-pink bg-opacity-20 p-1.5 rounded-full mr-4 mt-1.5">
                           <div className="w-2 h-2 bg-dream-pink rounded-full"></div>
                         </div>
-                        <span className="text-gray-100">{action}</span>
+                        <span className="text-white leading-relaxed">{action}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
 
-              <div className="mt-10 pt-6 border-t border-dream-glass-border">
+              <div className="mt-12 pt-8 border-t border-dream-glass-border">
                 <div className="text-center">
                   <h3 className="text-xl font-bold gradient-text mb-4">Continue Your Dream Journey</h3>
-                  <p className="text-gray-300 mb-6">
+                  <p className="text-white mb-8">
                     Create an account to save your dream interpretations and build a personal dream journal.
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <div className="flex flex-col sm:flex-row gap-6 justify-center">
                     <Link href="/auth/signup">
                       <Button size="lg" className="glass-button-primary w-full sm:w-auto">
                         <SparklesIcon className="mr-2 h-5 w-5" />
@@ -264,21 +285,19 @@ export default function PublicInterpretPage() {
           </div>
         ) : (
           <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-8">
+            <div className="text-center mb-10">
               <div>
-                <MoonIcon className="h-12 w-12 text-dream-purple mx-auto mb-4" />
+                <MoonIcon className="h-12 w-12 text-dream-purple mx-auto mb-6" />
               </div>
-              <h1 className="text-4xl font-bold gradient-text mb-2">Interpret Your Dream</h1>
-              <p className="text-gray-400 text-lg">
-                Describe your dream in detail for the most accurate interpretation
-              </p>
+              <h1 className="text-4xl font-bold gradient-text mb-4">Interpret Your Dream</h1>
+              <p className="text-white text-lg">Describe your dream in detail for the most accurate interpretation</p>
             </div>
 
-            <div className="glass-card p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title" className="text-white">
+            <div className="glass-card p-10">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <Label htmlFor="title" className="text-white text-base">
                       Dream Title <span className="text-dream-pink">*</span>
                     </Label>
                     <Input
@@ -298,22 +317,22 @@ export default function PublicInterpretPage() {
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="date" className="text-white">
+                  <div className="space-y-3">
+                    <Label htmlFor="date" className="text-white text-base">
                       Date of Dream <span className="text-dream-pink">*</span>
                     </Label>
                     <DreamDatePicker date={dreamData.date} onDateChange={handleDateChange} />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="content" className="text-white">
+                  <div className="space-y-3">
+                    <Label htmlFor="content" className="text-white text-base">
                       Dream Description <span className="text-dream-pink">*</span>
                     </Label>
                     <Textarea
                       id="content"
                       name="content"
                       placeholder="Describe your dream in as much detail as you can remember (minimum 100 characters)..."
-                      rows={6}
+                      rows={8}
                       value={dreamData.content}
                       onChange={handleChange}
                       required
@@ -326,14 +345,14 @@ export default function PublicInterpretPage() {
                           {errors.content}
                         </div>
                       ) : (
-                        <div className="text-gray-400 text-sm">{dreamData.content.length}/100 characters minimum</div>
+                        <div className="text-white text-sm">{dreamData.content.length}/100 characters minimum</div>
                       )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="emotion" className="text-white">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="emotion" className="text-white text-base">
                         Primary Emotion <span className="text-dream-pink">*</span>
                       </Label>
                       <Select value={dreamData.emotion} onValueChange={(value) => handleSelectChange("emotion", value)}>
@@ -359,8 +378,8 @@ export default function PublicInterpretPage() {
                       )}
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="clarity" className="text-white">
+                    <div className="space-y-3">
+                      <Label htmlFor="clarity" className="text-white text-base">
                         Dream Clarity <span className="text-dream-pink">*</span>
                       </Label>
                       <Select value={dreamData.clarity} onValueChange={(value) => handleSelectChange("clarity", value)}>
@@ -377,11 +396,24 @@ export default function PublicInterpretPage() {
                   </div>
                 </div>
 
-                {/* Progress Bar */}
-                <DreamProgressBar isActive={isSubmitting} />
+                {isSubmitting && (
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm text-white">
+                      <span>Interpreting your dream...</span>
+                      <span>{progress}%</span>
+                    </div>
+                    {/* Custom progress bar instead of using the Progress component */}
+                    <div className="h-2 w-full bg-dream-card-bg rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-dream-purple to-dream-blue transition-all duration-500 ease-in-out"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
 
-                <div className="pt-4">
-                  <Button type="submit" disabled={isSubmitting} className="glass-button-primary w-full py-6">
+                <div className="pt-6">
+                  <Button type="submit" disabled={isSubmitting} className="glass-button-primary w-full py-6 text-lg">
                     {isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -401,9 +433,24 @@ export default function PublicInterpretPage() {
         )}
       </main>
 
-      <footer className="relative z-10 border-t border-dream-glass-border backdrop-blur-md bg-dream-card-bg py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400">© {new Date().getFullYear()} DreamSage. All rights reserved.</p>
+      <footer className="relative z-10 border-t border-dream-glass-border backdrop-blur-md bg-dream-card-bg py-10">
+        <div className="container mx-auto px-6 text-center">
+          <div className="flex items-center justify-center mb-6">
+            <SparklesIcon className="h-5 w-5 text-dream-purple mr-2" />
+            <span className="text-xl font-bold gradient-text">DreamSage</span>
+          </div>
+          <div className="flex justify-center space-x-6 mb-6">
+            <Link href="/about" className="text-white hover:text-dream-purple transition-colors">
+              About Us
+            </Link>
+            <Link href="/privacy" className="text-white hover:text-dream-purple transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="text-white hover:text-dream-purple transition-colors">
+              Terms of Service
+            </Link>
+          </div>
+          <p className="text-white">© {new Date().getFullYear()} DreamSage. All rights reserved.</p>
         </div>
       </footer>
     </div>

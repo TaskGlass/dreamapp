@@ -10,15 +10,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, ArrowLeftIcon, SparklesIcon, AlertCircle } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/components/auth-provider"
-import { supabase } from "@/lib/supabase"
 import { DreamDatePicker } from "@/components/dream-date-picker"
-import { DreamProgressBar } from "@/components/dream-progress-bar"
+import { saveDream } from "@/lib/server-actions"
 
 export default function DashboardInterpretPage() {
   const router = useRouter()
   const { toast } = useToast()
   const { user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [progress, setProgress] = useState(0)
   const [errors, setErrors] = useState({
     title: "",
     content: "",
@@ -31,6 +31,21 @@ export default function DashboardInterpretPage() {
     emotion: "",
     clarity: "medium",
   })
+
+  // Progress bar animation
+  const startProgressAnimation = () => {
+    setProgress(0)
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 90) {
+          clearInterval(interval)
+          return prev
+        }
+        return prev + 10
+      })
+    }, 500)
+    return interval
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -108,77 +123,55 @@ export default function DashboardInterpretPage() {
     }
 
     setIsSubmitting(true)
+    const progressInterval = startProgressAnimation()
 
     try {
-      // Call the API to interpret the dream
-      const response = await fetch("/api/interpret-dream", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: dreamData.content,
-          emotion: dreamData.emotion,
-          clarity: dreamData.clarity,
-        }),
+      // Format date as ISO string for database
+      const formattedDate = dreamData.date.toISOString().split("T")[0]
+
+      // Save dream using server action
+      const result = await saveDream(user.id, {
+        title: dreamData.title,
+        content: dreamData.content,
+        date: formattedDate,
+        emotion: dreamData.emotion,
+        clarity: dreamData.clarity,
       })
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`)
-      }
-
-      const data = await response.json()
-
-      // Save dream to database with interpretation
-      const { data: dreamRecord, error: dreamError } = await supabase
-        .from("dreams")
-        .insert({
-          user_id: user.id,
-          title: dreamData.title,
-          content: dreamData.content,
-          date: dreamData.date.toISOString().split("T")[0],
-          emotion: dreamData.emotion,
-          clarity: dreamData.clarity,
-        })
-        .select()
-        .single()
-
-      if (dreamError) {
-        throw dreamError
-      }
-
-      // Save interpretation to database
-      await supabase.from("interpretations").insert({
-        dream_id: dreamRecord.id,
-        interpretation_text: data.interpretation.interpretation,
-        symbols: data.interpretation.symbols,
-        actions: data.interpretation.actions,
-      })
+      // Complete the progress bar
+      clearInterval(progressInterval)
+      setProgress(100)
 
       toast({
         title: "Dream saved",
-        description: "Your dream has been saved to your journal",
+        description: "Your dream has been saved and interpreted successfully",
       })
 
       // Redirect to the dream detail page
-      router.push(`/dashboard/dreams/${dreamRecord.id}`)
+      setTimeout(() => {
+        router.push(`/dashboard/dreams/${result.dream.id}`)
+      }, 500)
     } catch (error) {
       console.error("Error saving dream:", error)
+
       toast({
         title: "Error",
         description: "There was a problem saving your dream. Please try again.",
         variant: "destructive",
       })
+
       setIsSubmitting(false)
+      clearInterval(progressInterval)
+      setProgress(0)
     }
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 relative z-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div className="container mx-auto px-6 py-10 relative z-10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
         <div>
           <h1 className="text-3xl font-bold gradient-text">Interpret Your Dream</h1>
-          <p className="text-gray-400">Record and analyze your dream experience</p>
+          <p className="text-white">Record and analyze your dream experience</p>
         </div>
         <Button variant="ghost" onClick={() => router.back()} className="text-white hover:bg-white/10">
           <ArrowLeftIcon className="mr-2 h-4 w-4" />
@@ -186,11 +179,11 @@ export default function DashboardInterpretPage() {
         </Button>
       </div>
 
-      <div className="glass-card p-8 max-w-4xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title" className="text-white">
+      <div className="glass-card p-10 max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <Label htmlFor="title" className="text-white text-base">
                 Dream Title <span className="text-dream-pink">*</span>
               </Label>
               <Input
@@ -210,22 +203,22 @@ export default function DashboardInterpretPage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="date" className="text-white">
+            <div className="space-y-3">
+              <Label htmlFor="date" className="text-white text-base">
                 Date of Dream <span className="text-dream-pink">*</span>
               </Label>
               <DreamDatePicker date={dreamData.date} onDateChange={handleDateChange} />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="content" className="text-white">
+            <div className="space-y-3">
+              <Label htmlFor="content" className="text-white text-base">
                 Dream Description <span className="text-dream-pink">*</span>
               </Label>
               <Textarea
                 id="content"
                 name="content"
                 placeholder="Describe your dream in as much detail as you can remember (minimum 100 characters)..."
-                rows={6}
+                rows={8}
                 value={dreamData.content}
                 onChange={handleChange}
                 required
@@ -238,14 +231,14 @@ export default function DashboardInterpretPage() {
                     {errors.content}
                   </div>
                 ) : (
-                  <div className="text-gray-400 text-sm">{dreamData.content.length}/100 characters minimum</div>
+                  <div className="text-white text-sm">{dreamData.content.length}/100 characters minimum</div>
                 )}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="emotion" className="text-white">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <Label htmlFor="emotion" className="text-white text-base">
                   Primary Emotion <span className="text-dream-pink">*</span>
                 </Label>
                 <Select value={dreamData.emotion} onValueChange={(value) => handleSelectChange("emotion", value)}>
@@ -278,8 +271,8 @@ export default function DashboardInterpretPage() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="clarity" className="text-white">
+              <div className="space-y-3">
+                <Label htmlFor="clarity" className="text-white text-base">
                   Dream Clarity <span className="text-dream-pink">*</span>
                 </Label>
                 <Select value={dreamData.clarity} onValueChange={(value) => handleSelectChange("clarity", value)}>
@@ -296,10 +289,23 @@ export default function DashboardInterpretPage() {
             </div>
           </div>
 
-          {/* Progress Bar */}
-          <DreamProgressBar isActive={isSubmitting} />
+          {isSubmitting && (
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm text-white">
+                <span>Interpreting your dream...</span>
+                <span>{progress}%</span>
+              </div>
+              {/* Custom progress bar instead of using the Progress component */}
+              <div className="h-2 w-full bg-dream-card-bg rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-dream-purple to-dream-blue transition-all duration-500 ease-in-out"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
 
-          <div className="flex justify-end gap-4 pt-4">
+          <div className="flex justify-end gap-6 pt-6">
             <Button type="button" variant="outline" onClick={() => router.back()} className="glass-button">
               Cancel
             </Button>

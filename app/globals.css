@@ -81,6 +81,64 @@
 }
 
 /* Add these styles to improve text visibility */
+.text-gray-300,
+.text-gray-400,
+.text-gray-500 {
+  @apply text-white;
+}
+
+/* Improve contrast for text in glass cards */
+.glass-card p {
+  @apply text-white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Make backgrounds darker for better contrast */
+.bg-dream-card-bg {
+  background-color: rgba(19, 19, 32, 0.7);
+}
+
+.bg-dream-dark-blue {
+  background-color: rgba(19, 19, 32, 0.9);
+}
+
+/* Add a new darker background color */
+.bg-dream-dark {
+  background-color: rgba(15, 15, 25, 0.9);
+}
+
+/* Improve readability with better line height */
+p,
+li {
+  line-height: 1.7;
+}
+
+/* Improve spacing in forms */
+form .space-y-4 {
+  @apply space-y-6;
+}
+
+form .space-y-2 {
+  @apply space-y-3;
+}
+
+/* Improve label visibility */
+label {
+  @apply font-medium text-white;
+}
+
+/* Improve input text visibility */
+input,
+textarea,
+select {
+  @apply text-white;
+}
+
+/* Improve button text visibility */
+button {
+  @apply text-white;
+}
+
 .glass-card {
   @apply bg-dream-card-bg backdrop-blur-md border border-dream-glass-border rounded-xl;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);

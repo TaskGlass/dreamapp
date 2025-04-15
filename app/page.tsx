@@ -301,97 +301,27 @@ export default function Home() {
           </section>
         </main>
 
-        <footer className="relative z-10 backdrop-blur-md py-16">
-          <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-4 gap-10">
-              <div>
-                <h3 className="text-xl font-bold mb-6 gradient-text">DreamSage</h3>
-                <p className="text-gray-400 mb-6">
-                  Unlocking the wisdom of your subconscious mind through dream interpretation.
-                </p>
-                <div className="flex space-x-4">
-                  <SocialIcon icon="twitter" />
-                  <SocialIcon icon="instagram" />
-                  <SocialIcon icon="facebook" />
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold mb-6 text-white">Features</h4>
-                <ul className="space-y-3 text-gray-400">
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Dream Journal
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      AI Interpretation
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Subconscious Healing
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Personal Insights
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-bold mb-6 text-white">Resources</h4>
-                <ul className="space-y-3 text-gray-400">
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Dream Dictionary
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Healing Techniques
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Dream Science
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Community
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-bold mb-6 text-white">Company</h4>
-                <ul className="space-y-3 text-gray-400">
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      About Us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Terms of Service
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Privacy Policy
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      Contact
-                    </Link>
-                  </li>
-                </ul>
-              </div>
+        <footer className="relative z-10 border-t border-dream-glass-border backdrop-blur-md bg-dream-card-bg py-12">
+          <div className="container mx-auto px-6">
+            <div className="flex items-center justify-center mb-8">
+              <SparklesIcon className="h-6 w-6 text-dream-purple mr-2" />
+              <span className="text-2xl font-bold gradient-text">DreamSage</span>
             </div>
-            <div className="border-t border-dream-glass-border mt-12 pt-8 text-center text-gray-400">
+            <div className="flex justify-center space-x-8 mb-8">
+              <Link href="/about" className="text-white hover:text-dream-purple transition-colors">
+                About Us
+              </Link>
+              <Link href="/terms" className="text-white hover:text-dream-purple transition-colors">
+                Terms of Service
+              </Link>
+              <Link href="/privacy" className="text-white hover:text-dream-purple transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/contact" className="text-white hover:text-dream-purple transition-colors">
+                Contact
+              </Link>
+            </div>
+            <div className="border-t border-dream-glass-border mt-8 pt-8 text-center text-white">
               <p>© {new Date().getFullYear()} DreamSage. All rights reserved.</p>
             </div>
           </div>
