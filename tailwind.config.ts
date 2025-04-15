@@ -8,6 +8,10 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("tailwindcss-animate"),
+  ],
   future: {
     hoverOnlyWhenSupported: true, // Better performance on mobile
   },
@@ -129,7 +133,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
 }
 
 export default config

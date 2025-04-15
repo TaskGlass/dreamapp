@@ -336,13 +336,11 @@ button {
 }
 
 .glass-input {
-  @apply bg-dream-card-bg backdrop-blur-md border border-dream-glass-border rounded-lg px-4 py-2 text-white;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  @apply bg-dream-card-bg border border-dream-glass-border text-white placeholder:text-gray-400 focus:border-dream-purple focus:ring-2 focus:ring-dream-purple/30 focus:ring-offset-2 focus:ring-offset-dream-dark-blue;
 }
 
-.glass-input:focus {
-  @apply outline-none border-dream-glass-highlight;
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+.glass-button-primary {
+  @apply bg-dream-purple text-white hover:bg-dream-purple/90 focus:ring-2 focus:ring-dream-purple/30 focus:ring-offset-2 focus:ring-offset-dream-dark-blue;
 }
 
 /* Optimize shimmer effect for better performance */
@@ -688,7 +686,7 @@ footer {
 
 /* Improved popover positioning for date picker */
 [data-radix-popper-content-wrapper] {
-  z-index: 50 !important; /* Ensure it's above other elements */
+  @apply z-50;
 }
 
 /* Add a subtle animation to the date picker */
@@ -873,4 +871,47 @@ footer {
 /* Remove any bottom margin from the last element in the main content */
 main > *:last-child {
   margin-bottom: 0;
+}
+
+/* Calendar specific styles */
+.glass-input {
+  @apply bg-dream-card-bg border border-dream-glass-border text-white placeholder:text-gray-400 focus:border-dream-purple focus:ring-2 focus:ring-dream-purple/30 focus:ring-offset-2 focus:ring-offset-dream-dark-blue;
+}
+
+.glass-button-primary {
+  @apply bg-dream-purple text-white hover:bg-dream-purple/90 focus:ring-2 focus:ring-dream-purple/30 focus:ring-offset-2 focus:ring-offset-dream-dark-blue;
+}
+
+/* Calendar popover styles */
+[data-radix-popper-content-wrapper] {
+  @apply z-50;
+}
+
+/* Calendar day styles */
+.rdp-day_selected {
+  @apply bg-dream-purple text-white hover:bg-dream-purple/90;
+}
+
+.rdp-day_today {
+  @apply bg-dream-blue/30 text-white font-bold border border-dream-blue;
+}
+
+.rdp-day {
+  @apply text-white hover:bg-dream-purple/20;
+}
+
+.rdp-button:hover:not([disabled]) {
+  @apply bg-dream-purple/20;
+}
+
+.rdp-nav_button {
+  @apply text-white hover:bg-dream-purple/20;
+}
+
+.rdp-caption_label {
+  @apply text-white font-bold;
+}
+
+.rdp-head_cell {
+  @apply text-gray-400 font-medium;
 }

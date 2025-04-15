@@ -31,11 +31,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Get current session
         const {
           data: { session },
+          error: sessionError,
         } = await supabase.auth.getSession()
+
+        if (sessionError) {
+          console.error("Session error:", sessionError)
+          toast({
+            title: "Authentication Error",
+            description: "There was a problem checking your session. Please try again.",
+            variant: "destructive",
+          })
+          return
+        }
 
         if (session) {
           // Get user profile data
-          const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single()
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", session.user.id)
+            .single()
+
+          if (profileError) {
+            console.error("Profile error:", profileError)
+            toast({
+              title: "Profile Error",
+              description: "There was a problem loading your profile. Please try again.",
+              variant: "destructive",
+            })
+            return
+          }
 
           if (profile) {
             setUser(profile as User)
@@ -43,6 +68,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         console.error("Error checking auth:", error)
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred. Please try again.",
+          variant: "destructive",
+        })
       } finally {
         setLoading(false)
       }
@@ -56,7 +86,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session) {
         // Get user profile data
-        const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single()
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single()
+
+        if (profileError) {
+          console.error("Profile error:", profileError)
+          return
+        }
 
         if (profile) {
           setUser(profile as User)
@@ -96,18 +135,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
+        console.error("Sign in error:", error)
         return { error }
       }
 
-      // Get user profile data
-      const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+      if (data?.user) {
+        // Get user profile data
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", data.user.id)
+          .single()
 
-      if (profile) {
-        setUser(profile as User)
+        if (profileError) {
+          // If profile doesn't exist, create it
+          if (profileError.code === 'PGRST116') {
+            const { error: createError } = await supabase
+              .from("profiles")
+              .insert([
+                {
+                  id: data.user.id,
+                  email: data.user.email,
+                  name: data.user.user_metadata?.name || 'User',
+                  dream_credits: 3,
+                  is_subscribed: false,
+                },
+              ])
+
+            if (createError) {
+              console.error("Profile creation error:", createError)
+              return { error: createError }
+            }
+
+            // Get the newly created profile
+            const { data: newProfile, error: newProfileError } = await supabase
+              .from("profiles")
+              .select("*")
+              .eq("id", data.user.id)
+              .single()
+
+            if (newProfileError) {
+              console.error("New profile error:", newProfileError)
+              return { error: newProfileError }
+            }
+
+            setUser(newProfile as User)
+          } else {
+            console.error("Profile error:", profileError)
+            return { error: profileError }
+          }
+        } else if (profile) {
+          setUser(profile as User)
+        }
       }
 
       return { error: null }
     } catch (error) {
+      console.error("Sign in error:", error)
       return { error }
     }
   }
@@ -125,50 +209,88 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
+        console.error("Sign up error:", error)
         return { error, user: null }
       }
 
-      // Update the user's dream credits to 3 when they sign up
-      if (data.user) {
-        await supabase.from("profiles").update({ dream_credits: 3 }).eq("id", data.user.id)
+      if (data?.user) {
+        // Create user profile
+        const { error: profileError } = await supabase.from("profiles").insert([
+          {
+            id: data.user.id,
+            email,
+            name,
+            dream_credits: 3, // Start with 3 free credits
+            is_subscribed: false,
+          },
+        ])
+
+        if (profileError) {
+          console.error("Profile creation error:", profileError)
+          return { error: profileError, user: null }
+        }
+
+        setUser({
+          id: data.user.id,
+          email,
+          name,
+          created_at: new Date().toISOString(),
+          dream_credits: 3,
+          is_subscribed: false,
+        })
       }
 
-      return { error: null, user: data.user }
+      return { error: null, user: data?.user }
     } catch (error) {
+      console.error("Sign up error:", error)
       return { error, user: null }
     }
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    router.push("/")
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error("Sign out error:", error)
+      }
+      setUser(null)
+      router.push("/")
+    } catch (error) {
+      console.error("Sign out error:", error)
+    }
   }
 
   const updateUser = async (updates: Partial<User>) => {
-    if (!user) return
-
     try {
-      const { error } = await supabase.from("profiles").update(updates).eq("id", user.id)
+      if (!user) return
+
+      const { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", user.id)
 
       if (error) {
-        throw error
+        console.error("Update user error:", error)
+        return
       }
 
-      // Refresh user data
-      const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
-
-      if (profile) {
-        setUser(profile as User)
-      }
+      setUser((prev) => (prev ? { ...prev, ...updates } : null))
     } catch (error) {
-      console.error("Error updating user:", error)
-      throw error
+      console.error("Update user error:", error)
     }
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, updateUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        signIn,
+        signUp,
+        signOut,
+        updateUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

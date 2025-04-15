@@ -20,22 +20,46 @@ export default function LoginPage() {
     password: "",
   })
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (isLoading) return
+    
     setIsLoading(true)
 
     try {
+      if (!formData.email || !formData.password) {
+        toast({
+          title: "Missing fields",
+          description: "Please fill in all required fields.",
+          variant: "destructive",
+        })
+        return
+      }
+
       const { error } = await signIn(formData.email, formData.password)
 
       if (error) {
+        let errorMessage = "Please check your credentials and try again."
+        
+        if (error.message?.includes("Invalid login credentials")) {
+          errorMessage = "Invalid email or password. Please try again."
+        } else if (error.message?.includes("Email not confirmed")) {
+          errorMessage = "Please confirm your email before logging in."
+        } else if (error.message?.includes("Too many requests")) {
+          errorMessage = "Too many login attempts. Please try again later."
+        } else if (error.message?.includes("Profile error")) {
+          errorMessage = "There was a problem loading your profile. Please try again or contact support."
+        }
+
         toast({
           title: "Login failed",
-          description: error.message || "Please check your credentials and try again.",
+          description: errorMessage,
           variant: "destructive",
         })
         return
@@ -48,6 +72,7 @@ export default function LoginPage() {
 
       router.push("/dashboard")
     } catch (error) {
+      console.error("Login error:", error)
       toast({
         title: "Login failed",
         description: "An unexpected error occurred. Please try again.",
@@ -87,6 +112,7 @@ export default function LoginPage() {
                 type="email"
                 placeholder="you@example.com"
                 required
+                disabled={isLoading}
                 className="glass-input"
                 value={formData.email}
                 onChange={handleChange}
@@ -104,34 +130,36 @@ export default function LoginPage() {
                 id="password"
                 name="password"
                 type="password"
-                placeholder="••••••••"
                 required
+                disabled={isLoading}
                 className="glass-input"
                 value={formData.password}
                 onChange={handleChange}
               />
             </div>
 
-            <Button type="submit" className="glass-button-primary w-full" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full glass-button-primary"
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Signing in...
                 </>
               ) : (
-                "Sign In"
+                "Sign in"
               )}
             </Button>
-          </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-400">
+            <p className="text-center text-sm text-gray-400">
               Don't have an account?{" "}
               <Link href="/auth/signup" className="text-dream-purple hover:underline">
                 Sign up
               </Link>
             </p>
-          </div>
+          </form>
         </div>
       </div>
     </div>

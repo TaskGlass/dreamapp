@@ -13,6 +13,7 @@ import { DreamDatePicker } from "@/components/dream-date-picker"
 import { DreamProgressBar } from "@/components/dream-progress-bar"
 import { MobileHeader } from "@/components/mobile-header"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useAuth } from "@/components/auth-provider"
 
 // Lazy load components that aren't needed immediately
 const InterpretationResult = lazy(() => import("@/components/interpretation-result"))
@@ -20,6 +21,7 @@ const InterpretationResult = lazy(() => import("@/components/interpretation-resu
 export default function PublicInterpretPage() {
   const { toast } = useToast()
   const isMobile = useIsMobile()
+  const { user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [interpretation, setInterpretation] = useState(null)
   const [interpretationSource, setInterpretationSource] = useState(null)
@@ -59,25 +61,25 @@ export default function PublicInterpretPage() {
     return interval
   }
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setDreamData((prev) => ({ ...prev, [name]: value }))
 
     // Clear error when user types
-    if (errors[name]) {
+    if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [name]: "" }))
     }
   }
 
-  const handleDateChange = (date) => {
+  const handleDateChange = (date: Date | undefined) => {
     setDreamData((prev) => ({ ...prev, date: date || new Date() }))
   }
 
-  const handleSelectChange = (name, value) => {
+  const handleSelectChange = (name: string, value: string) => {
     setDreamData((prev) => ({ ...prev, [name]: value }))
 
     // Clear error when user selects
-    if (errors[name]) {
+    if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [name]: "" }))
     }
   }
@@ -112,10 +114,10 @@ export default function PublicInterpretPage() {
     return isValid
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (hasUsedFreeTrial) {
+    if (hasUsedFreeTrial && !user) {
       toast({
         title: "Free trial used",
         description: "You've already used your free interpretation. Create an account to continue.",
@@ -148,6 +150,7 @@ export default function PublicInterpretPage() {
           content: dreamData.content,
           emotion: dreamData.emotion,
           clarity: dreamData.clarity,
+          userId: user?.id,
         }),
       })
 
@@ -166,8 +169,10 @@ export default function PublicInterpretPage() {
         setInterpretationSource(data.source)
 
         // Mark that the user has used their free interpretation
-        localStorage.setItem("hasUsedFreeInterpretation", "true")
-        setHasUsedFreeTrial(true)
+        if (!user) {
+          localStorage.setItem("hasUsedFreeInterpretation", "true")
+          setHasUsedFreeTrial(true)
+        }
 
         toast({
           title: "Dream interpreted",
@@ -209,14 +214,22 @@ export default function PublicInterpretPage() {
                 <h1 className="text-2xl font-bold gradient-text">DreamSage</h1>
               </Link>
               <div className="flex gap-4">
-                <Link href="/auth/login">
-                  <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/auth/signup">
-                  <Button className="glass-button-primary">Sign Up</Button>
-                </Link>
+                {user ? (
+                  <Link href="/dashboard">
+                    <Button className="glass-button-primary">Dashboard</Button>
+                  </Link>
+                ) : (
+                  <>
+                    <Link href="/auth/login">
+                      <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
+                        Login
+                      </Button>
+                    </Link>
+                    <Link href="/auth/signup">
+                      <Button className="glass-button-primary">Sign Up</Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -252,21 +265,23 @@ export default function PublicInterpretPage() {
               </p>
 
               {/* Free trial banner */}
-              <div className="glass-card p-4 sm:p-6 border-dream-purple bg-dream-purple/10 mt-6 sm:mt-8 mb-6 sm:mb-8">
-                <div className="flex flex-col sm:flex-row sm:items-center">
-                  <SparklesIcon className="h-6 w-6 sm:h-8 sm:w-8 text-dream-purple mb-2 sm:mb-0 sm:mr-3 mx-auto sm:mx-0" />
-                  <div className="text-center sm:text-left">
-                    <h3 className="text-lg sm:text-xl font-bold text-white">Try one free dream interpretation</h3>
-                    <p className="text-white text-sm sm:text-base">
-                      Create an account after to get 3 more free interpretations and save your dreams!
-                    </p>
+              {!user && (
+                <div className="glass-card p-4 sm:p-6 border-dream-purple bg-dream-purple/10 mt-6 sm:mt-8 mb-6 sm:mb-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center">
+                    <SparklesIcon className="h-6 w-6 sm:h-8 sm:w-8 text-dream-purple mb-2 sm:mb-0 sm:mr-3 mx-auto sm:mx-0" />
+                    <div className="text-center sm:text-left">
+                      <h3 className="text-lg sm:text-xl font-bold text-white">Try one free dream interpretation</h3>
+                      <p className="text-white text-sm sm:text-base">
+                        Create an account after to get 3 more free interpretations and save your dreams!
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="glass-card p-6 sm:p-10">
-              {hasUsedFreeTrial && (
+              {hasUsedFreeTrial && !user && (
                 <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-dream-purple/10 rounded-lg border border-dream-purple">
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex items-center text-center sm:text-left">
@@ -313,7 +328,7 @@ export default function PublicInterpretPage() {
 
                   <div className="space-y-2 sm:space-y-3">
                     <Label htmlFor="date" className="text-white text-base">
-                      Date of Dream <span className="text-dream-pink">*</span>
+                      Dream Date <span className="text-dream-pink">*</span>
                     </Label>
                     <DreamDatePicker date={dreamData.date} onDateChange={handleDateChange} />
                   </div>
@@ -395,15 +410,15 @@ export default function PublicInterpretPage() {
                 <div className="pt-4 sm:pt-6">
                   <Button
                     type="submit"
-                    disabled={isSubmitting || hasUsedFreeTrial}
-                    className={`w-full py-4 sm:py-6 text-base sm:text-lg ${hasUsedFreeTrial ? "glass-button opacity-70" : "glass-button-primary"}`}
+                    disabled={isSubmitting || (hasUsedFreeTrial && !user)}
+                    className={`w-full py-4 sm:py-6 text-base sm:text-lg ${hasUsedFreeTrial && !user ? "glass-button opacity-70" : "glass-button-primary"}`}
                   >
                     {isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                         Interpreting Dream...
                       </>
-                    ) : hasUsedFreeTrial ? (
+                    ) : hasUsedFreeTrial && !user ? (
                       <>Free Trial Used</>
                     ) : (
                       <>
@@ -413,7 +428,7 @@ export default function PublicInterpretPage() {
                     )}
                   </Button>
 
-                  {hasUsedFreeTrial && (
+                  {hasUsedFreeTrial && !user && (
                     <div className="mt-4 text-center">
                       <Link href="/auth/signup">
                         <Button className="glass-button-primary py-4 sm:py-6 text-base sm:text-lg w-full">
