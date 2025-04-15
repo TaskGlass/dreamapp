@@ -597,3 +597,68 @@ footer {
   backdrop-filter: blur(10px);
   border-color: rgba(255, 255, 255, 0.05) !important;
 }
+
+/* Add these styles at the end of the file for improved mobile date picker */
+
+/* Mobile optimized calendar */
+@media (max-width: 768px) {
+  .rdp {
+    --rdp-cell-size: 40px !important; /* Larger cells on mobile */
+    --rdp-caption-font-size: 16px !important; /* Larger caption */
+    --rdp-accent-color: theme("colors.dream.purple") !important;
+  }
+
+  .rdp-button {
+    font-size: 16px !important; /* Larger text */
+  }
+
+  .rdp-nav {
+    padding: 4px !important; /* More padding */
+  }
+
+  .rdp-caption {
+    padding: 8px !important; /* More padding */
+  }
+
+  /* Improve touch targets */
+  .rdp-nav_button,
+  .rdp-button {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  /* Better focus states for touch */
+  .rdp-button:focus:not([disabled]),
+  .rdp-button:active:not([disabled]) {
+    background-color: rgba(139, 92, 246, 0.2) !important;
+    border-color: theme("colors.dream.purple") !important;
+  }
+
+  /* Improved selected state */
+  .rdp-day_selected {
+    background-color: theme("colors.dream.purple") !important;
+    font-weight: bold !important;
+  }
+}
+
+/* Improved popover positioning for date picker */
+[data-radix-popper-content-wrapper] {
+  z-index: 50 !important; /* Ensure it's above other elements */
+}
+
+/* Add a subtle animation to the date picker */
+.rdp-months {
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -101,6 +101,13 @@ export default function DashboardLayout({ children }) {
                           onClick={() => setIsMobileMenuOpen(false)}
                         />
                         <MobileNavItem
+                          href="/dashboard/library"
+                          icon={<BookIcon className="h-5 w-5" />}
+                          label="Dream Library"
+                          active={pathname === "/dashboard/library"}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        />
+                        <MobileNavItem
                           href="/dashboard/calendar"
                           icon={<CalendarIcon className="h-5 w-5" />}
                           label="Calendar"
@@ -201,6 +208,12 @@ export default function DashboardLayout({ children }) {
                 icon={<BookIcon className="h-5 w-5" />}
                 label="Dream Journal"
                 active={pathname === "/dashboard/dreams"}
+              />
+              <NavItem
+                href="/dashboard/library"
+                icon={<BookIcon className="h-5 w-5" />}
+                label="Dream Library"
+                active={pathname === "/dashboard/library"}
               />
               <NavItem
                 href="/dashboard/calendar"
