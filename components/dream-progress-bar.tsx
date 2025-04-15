@@ -16,6 +16,7 @@ export function DreamProgressBar({
   className = "",
 }: DreamProgressBarProps) {
   const [progress, setProgress] = useState(0)
+  const [animationFrame, setAnimationFrame] = useState<number | null>(null)
 
   // Reset progress when active state changes
   useEffect(() => {
@@ -23,8 +24,11 @@ export function DreamProgressBar({
       setProgress(0)
     } else {
       setProgress(0)
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame)
+      }
     }
-  }, [isActive])
+  }, [isActive, animationFrame])
 
   // Handle external progress updates
   useEffect(() => {
@@ -33,24 +37,50 @@ export function DreamProgressBar({
     }
   }, [externalProgress])
 
-  // Auto increment progress if enabled
+  // Auto increment progress if enabled - using requestAnimationFrame for better performance
   useEffect(() => {
-    if (!isActive || !autoIncrement || externalProgress !== undefined) return
+    if (!isActive || !autoIncrement || externalProgress !== undefined) {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame)
+      }
+      return
+    }
 
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        // Slow down as we approach 90%
-        if (prev >= 90) {
-          clearInterval(interval)
-          return prev
-        }
+    let lastTimestamp = 0
+    const incrementStep = 0.05
 
-        const increment = prev < 30 ? 5 : prev < 60 ? 3 : prev < 80 ? 1 : 0.5
-        return Math.min(prev + increment, 90)
-      })
-    }, 500)
+    const animate = (timestamp: number) => {
+      if (!lastTimestamp) lastTimestamp = timestamp
 
-    return () => clearInterval(interval)
+      const elapsed = timestamp - lastTimestamp
+
+      // Update every 50ms for smoother animation
+      if (elapsed > 50) {
+        lastTimestamp = timestamp
+
+        setProgress((prev) => {
+          // Slow down as we approach 90%
+          if (prev >= 90) {
+            return prev
+          }
+
+          const increment = prev < 30 ? 5 : prev < 60 ? 3 : prev < 80 ? 1 : 0.5
+          return Math.min(prev + increment * incrementStep, 90)
+        })
+      }
+
+      const frame = requestAnimationFrame(animate)
+      setAnimationFrame(frame)
+    }
+
+    const frame = requestAnimationFrame(animate)
+    setAnimationFrame(frame)
+
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame)
+      }
+    }
   }, [isActive, autoIncrement, externalProgress])
 
   if (!isActive) return null
@@ -61,11 +91,8 @@ export function DreamProgressBar({
         <span>Interpreting your dream...</span>
         <span>{Math.round(progress)}%</span>
       </div>
-      <div className="h-2 w-full bg-dream-card-bg rounded-full overflow-hidden">
-        <div
-          className="h-full bg-gradient-to-r from-dream-purple to-dream-blue transition-all duration-500 ease-in-out"
-          style={{ width: `${progress}%` }}
-        />
+      <div className="dream-progress-bar">
+        <div className="dream-progress-indicator" style={{ width: `${progress}%` }} />
       </div>
     </div>
   )

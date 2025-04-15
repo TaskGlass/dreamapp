@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { SparklesIcon, Loader2 } from "lucide-react"
+import { SparklesIcon, Loader2, GiftIcon } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/components/auth-provider"
 
@@ -56,7 +56,7 @@ export default function SignupPage() {
 
       toast({
         title: "Account created",
-        description: "Welcome to DreamSage! Please check your email to confirm your account.",
+        description: "Welcome to DreamSage! You've received 3 free dream interpretations.",
       })
 
       // If email confirmation is required, redirect to a confirmation page
@@ -91,6 +91,19 @@ export default function SignupPage() {
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold gradient-text">Create Your Account</h1>
             <p className="text-gray-400 mt-2">Start your journey of dream exploration</p>
+          </div>
+
+          {/* Bonus banner */}
+          <div className="mb-6 p-4 bg-dream-purple/10 rounded-lg border border-dream-purple flex items-center">
+            <GiftIcon className="h-10 w-10 text-dream-purple mr-3 flex-shrink-0" />
+            <div>
+              <h3 className="font-bold text-white">Sign up today and get:</h3>
+              <ul className="text-white mt-1">
+                <li>• 3 free dream interpretations</li>
+                <li>• Personal dream library</li>
+                <li>• Dream pattern insights</li>
+              </ul>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -165,7 +178,7 @@ export default function SignupPage() {
                   Creating account...
                 </>
               ) : (
-                "Create Account"
+                "Create Account & Get 3 Free Interpretations"
               )}
             </Button>
           </form>

@@ -2,68 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+/* Optimize CSS variables for better performance */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+  /* Dream theme specific colors */
+  --dream-purple: 265 84% 70%;
+  --dream-blue: 240 84% 66%;
+  --dream-pink: 330 84% 66%;
+  --dream-dark: 240 33% 5%;
+  --dream-dark-blue: 240 33% 8%;
+  --dream-card-bg: 240 33% 10%;
+  --dream-glass-border: 240 33% 15%;
+  --dream-glass-highlight: 240 33% 20%;
+}
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
 }
 
 @layer base {
@@ -72,15 +64,30 @@
   }
   body {
     @apply bg-dream-dark text-white;
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
   }
 
   /* Improve focus styles for accessibility */
   :focus-visible {
     @apply outline-none ring-2 ring-dream-purple ring-offset-2 ring-offset-dream-dark;
   }
+
+  /* Optimize touch interactions */
+  @media (hover: none) {
+    button,
+    a,
+    input,
+    select,
+    textarea {
+      touch-action: manipulation;
+    }
+  }
 }
 
-/* Add these styles to improve text visibility */
+/* Improve text visibility */
 .text-gray-300,
 .text-gray-400,
 .text-gray-500 {
@@ -139,9 +146,11 @@ button {
   @apply text-white;
 }
 
+/* Glass card with will-change optimization for better performance */
 .glass-card {
   @apply bg-dream-card-bg backdrop-blur-md border border-dream-glass-border rounded-xl;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  will-change: transform, opacity;
 }
 
 /* Improve contrast for text in glass cards */
@@ -191,18 +200,19 @@ button {
   @apply bg-dream-gradient bg-clip-text text-transparent;
 }
 
-/* Add these styles to enhance the dreamy background */
+/* Optimize the dreamy background for better performance */
 .dream-bg {
   background: radial-gradient(circle at 50% 50%, #131340, #0f0f22);
   position: relative;
   overflow-x: hidden;
   min-height: 100vh;
+  will-change: transform; /* Optimize for animations */
 }
 
-/* Add more animated elements to the background */
+/* Optimize background patterns with reduced complexity */
 .dream-bg::before {
   content: "";
-  position: absolute;
+  position: fixed; /* Use fixed instead of absolute for better performance */
   top: 0;
   left: 0;
   width: 100%;
@@ -213,22 +223,23 @@ button {
   opacity: 0.3;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
   animation: floatBackground 120s linear infinite;
 }
 
 @keyframes floatBackground {
   0% {
-    background-position: 0 0;
+    transform: translateY(0);
   }
   100% {
-    background-position: 300px 300px;
+    transform: translateY(-300px);
   }
 }
 
-/* Add floating stars to the background */
+/* Optimize star background */
 .dream-bg::after {
   content: "";
-  position: absolute;
+  position: fixed; /* Use fixed instead of absolute for better performance */
   top: 0;
   left: 0;
   width: 100%;
@@ -237,11 +248,10 @@ button {
     radial-gradient(1px 1px at 50% 35%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%),
     radial-gradient(2px 2px at 75% 55%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 100%),
     radial-gradient(1px 1px at 15% 65%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%),
-    radial-gradient(1.5px 1.5px at 85% 25%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 100%),
-    radial-gradient(1px 1px at 35% 85%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%),
-    radial-gradient(2px 2px at 65% 75%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 100%);
+    radial-gradient(1.5px 1.5px at 85% 25%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 100%);
   pointer-events: none;
   z-index: 1;
+  will-change: opacity;
   animation: twinkle 10s ease-in-out infinite alternate;
 }
 
@@ -260,7 +270,7 @@ button {
   z-index: 2;
 }
 
-/* Make glow blobs more vibrant and dreamy */
+/* Optimize glow blobs for better performance */
 .glow-blob {
   position: fixed;
   border-radius: 50%;
@@ -269,6 +279,7 @@ button {
   opacity: 0.2;
   pointer-events: none;
   mix-blend-mode: screen;
+  will-change: transform, opacity;
   animation: float 20s ease-in-out infinite;
 }
 
@@ -334,7 +345,7 @@ button {
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
 }
 
-/* Add a subtle shimmer effect to glass cards */
+/* Optimize shimmer effect for better performance */
 .glass-card {
   position: relative;
   overflow: hidden;
@@ -354,6 +365,7 @@ button {
     rgba(255, 255, 255, 0) 100%
   );
   transform: rotate(30deg);
+  will-change: transform;
   animation: shimmer 10s linear infinite;
   pointer-events: none;
 }
@@ -385,7 +397,7 @@ button {
   @apply opacity-90 transform scale-105 transition-transform;
 }
 
-/* New styles for enhanced dream interpretation page */
+/* Optimize dream input icon */
 .dream-input-icon {
   @apply absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400;
 }
@@ -450,14 +462,14 @@ button {
 
 /* Gold star color for reviews */
 .star-gold {
-  @apply text-amber-400;
+  @apply text-amber-400 fill-amber-400;
 }
 
 /* Add these styles to the end of the file */
 
 /* Add a white background with gradient to the progress bar for better visibility */
 .dream-progress-bar {
-  @apply h-2 w-full bg-white rounded-full overflow-hidden;
+  @apply h-2 w-full bg-white/20 rounded-full overflow-hidden;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
@@ -610,6 +622,8 @@ footer {
 
   .rdp-button {
     font-size: 16px !important; /* Larger text */
+    min-width: 40px !important;
+    height: 40px !important;
   }
 
   .rdp-nav {
@@ -639,6 +653,37 @@ footer {
     background-color: theme("colors.dream.purple") !important;
     font-weight: bold !important;
   }
+
+  /* Improve mobile form elements */
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px !important; /* Prevent zoom on focus in iOS */
+  }
+
+  /* Improve tap targets */
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Improve spacing on mobile */
+  .container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Fix mobile dialog positioning */
+  [role="dialog"] {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+  }
 }
 
 /* Improved popover positioning for date picker */
@@ -660,5 +705,52 @@ footer {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Optimize loading states */
+.loading-skeleton {
+  @apply bg-dream-card-bg animate-pulse rounded;
+}
+
+/* Optimize mobile navigation */
+.mobile-nav-item {
+  @apply flex items-center px-4 py-3 text-white hover:bg-dream-purple/10 rounded-md transition-colors;
+}
+
+/* Improve mobile dialog */
+.mobile-dialog {
+  @apply fixed inset-0 z-50 bg-dream-dark-blue/95 backdrop-blur-md p-4 overflow-y-auto;
+}
+
+/* Optimize transitions */
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optimize for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

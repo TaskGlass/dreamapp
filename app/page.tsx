@@ -12,6 +12,8 @@ import {
   ArrowRightIcon,
   CheckIcon,
   XIcon,
+  GiftIcon,
+  UserPlus,
 } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 // Import the FluidBackground component at the top of the file
@@ -60,15 +62,36 @@ export default function Home() {
                 <h2 className="text-5xl md:text-6xl font-bold mb-8 gradient-text leading-tight">
                   Unlock the Wisdom of Your Dreams
                 </h2>
-                <p className="text-xl mb-10 text-gray-300 leading-relaxed">
+                <p className="text-xl mb-10 text-white leading-relaxed">
                   Record, interpret, and transform your dreams into meaningful insights for personal growth and healing.
-                  Try one free interpretation today!
                 </p>
-                <Link href="/interpret">
-                  <Button size="lg" className="glass-button-primary px-8 py-6 text-lg">
-                    Interpret Your Dream <ArrowRightIcon className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
+
+                {/* New prominent CTA section */}
+                <div className="glass-card p-6 border-dream-purple bg-dream-purple/10 mb-10">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center">
+                      <GiftIcon className="h-10 w-10 text-dream-purple mr-4 flex-shrink-0" />
+                      <div className="text-left">
+                        <h3 className="text-xl font-bold text-white">Try one free interpretation</h3>
+                        <p className="text-white">Create an account after to get 3 more free interpretations!</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Link href="/interpret">
+                        <Button size="lg" className="glass-button w-full sm:w-auto whitespace-nowrap">
+                          <MoonIcon className="mr-2 h-5 w-5" />
+                          Try For Free
+                        </Button>
+                      </Link>
+                      <Link href="/auth/signup">
+                        <Button size="lg" className="glass-button-primary w-full sm:w-auto whitespace-nowrap">
+                          <UserPlus className="mr-2 h-5 w-5" />
+                          Create Account
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -101,7 +124,7 @@ export default function Home() {
             <div className="container mx-auto px-4">
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-6">Choose Your Dream Journey</h2>
-                <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                <p className="text-xl text-white max-w-2xl mx-auto">
                   Select the plan that best fits your dream exploration needs
                 </p>
 
@@ -136,20 +159,20 @@ export default function Home() {
                       <span className="text-4xl font-bold text-white">$0</span>
                       <span className="text-gray-400 mb-1">/forever</span>
                     </div>
-                    <p className="text-gray-400 mt-2">Perfect for casual dream explorers</p>
+                    <p className="text-white mt-2">Perfect for casual dream explorers</p>
                   </div>
 
                   <ul className="space-y-3 mb-8 flex-grow">
-                    <PricingFeature included>1 dream interpretation per day</PricingFeature>
+                    <PricingFeature included>1 free trial interpretation</PricingFeature>
+                    <PricingFeature included>3 interpretations after signup</PricingFeature>
+                    <PricingFeature included>Dream library</PricingFeature>
                     <PricingFeature included>Basic dream analysis</PricingFeature>
-                    <PricingFeature included>Dream journal</PricingFeature>
                     <PricingFeature>Advanced insights</PricingFeature>
                     <PricingFeature>Pattern recognition</PricingFeature>
-                    <PricingFeature>Priority support</PricingFeature>
                   </ul>
 
-                  <Link href="/interpret">
-                    <Button className="glass-button w-full">Get Started</Button>
+                  <Link href="/auth/signup">
+                    <Button className="glass-button-primary w-full">Sign Up Free</Button>
                   </Link>
                 </div>
 
@@ -165,13 +188,13 @@ export default function Home() {
                       <span className="text-4xl font-bold text-white">${isAnnual ? "9" : "12"}</span>
                       <span className="text-gray-400 mb-1">/{isAnnual ? "month" : "month"}</span>
                     </div>
-                    <p className="text-gray-400 mt-2">{isAnnual ? "Billed as $108 per year" : "Billed monthly"}</p>
+                    <p className="text-white mt-2">{isAnnual ? "Billed as $108 per year" : "Billed monthly"}</p>
                   </div>
 
                   <ul className="space-y-3 mb-8 flex-grow">
                     <PricingFeature included>10 dream interpretations/month</PricingFeature>
                     <PricingFeature included>Advanced dream analysis</PricingFeature>
-                    <PricingFeature included>Dream journal</PricingFeature>
+                    <PricingFeature included>Dream library</PricingFeature>
                     <PricingFeature included>Advanced insights</PricingFeature>
                     <PricingFeature included>Pattern recognition</PricingFeature>
                     <PricingFeature>Priority support</PricingFeature>
@@ -190,13 +213,13 @@ export default function Home() {
                       <span className="text-4xl font-bold text-white">${isAnnual ? "19" : "24"}</span>
                       <span className="text-gray-400 mb-1">/{isAnnual ? "month" : "month"}</span>
                     </div>
-                    <p className="text-gray-400 mt-2">{isAnnual ? "Billed as $228 per year" : "Billed monthly"}</p>
+                    <p className="text-white mt-2">{isAnnual ? "Billed as $228 per year" : "Billed monthly"}</p>
                   </div>
 
                   <ul className="space-y-3 mb-8 flex-grow">
                     <PricingFeature included>20 dream interpretations/month</PricingFeature>
                     <PricingFeature included>Premium dream analysis</PricingFeature>
-                    <PricingFeature included>Dream journal</PricingFeature>
+                    <PricingFeature included>Dream library</PricingFeature>
                     <PricingFeature included>Advanced insights</PricingFeature>
                     <PricingFeature included>Pattern recognition</PricingFeature>
                     <PricingFeature included>Priority support</PricingFeature>
@@ -218,7 +241,7 @@ export default function Home() {
                 <h2 className="text-3xl md:text-4xl font-bold mb-8 gradient-text">
                   Transform Your Dream Insights Into Action
                 </h2>
-                <p className="text-xl mb-10 text-gray-300 leading-relaxed">
+                <p className="text-xl mb-10 text-white leading-relaxed">
                   DreamSage doesn't just interpret your dreams—it provides practical steps to integrate these insights
                   into your waking life for meaningful personal growth.
                 </p>
@@ -236,8 +259,8 @@ export default function Home() {
               <div className="glass-card p-8 md:p-10 max-w-5xl mx-auto">
                 <div className="flex flex-col md:flex-row items-center gap-10">
                   <div className="md:w-1/2">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-6 gradient-text">Dream Journal Preview</h3>
-                    <p className="text-lg text-gray-300 mb-8 leading-relaxed">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-6 gradient-text">Dream Library Preview</h3>
+                    <p className="text-lg text-white mb-8 leading-relaxed">
                       Experience the power of dream interpretation with our intuitive and beautiful interface. Track
                       patterns, gain insights, and transform your life through the wisdom of your dreams.
                     </p>
@@ -275,7 +298,7 @@ export default function Home() {
             <div className="container mx-auto px-4">
               <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold mb-6 gradient-text">What Dreamers Are Saying</h2>
-                <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                <p className="text-lg text-white max-w-2xl mx-auto">
                   Join thousands of people who are unlocking the wisdom of their dreams with DreamSage.
                 </p>
               </div>
@@ -335,7 +358,7 @@ function FeatureCard({ icon, title, description }) {
   return (
     <div className="glass-card glass-card-hover glow p-8 h-full transition-transform hover:translate-y-[-5px]">
       <div className="flex justify-center mb-6">{icon}</div>
-      <h3 className="text-xl font-bold mb-4 text-center gradient-text">{title}</h3>
+      <h3 className="text-xl font-bold mb-4 text-center text-white">{title}</h3>
       <p className="text-white text-center leading-relaxed">{description}</p>
     </div>
   )
@@ -347,10 +370,10 @@ function TestimonialCard({ quote, author, role }) {
       <div className="mb-6">
         <StarRating rating={5} />
       </div>
-      <p className="text-gray-300 mb-6 italic">"{quote}"</p>
+      <p className="text-white mb-6 italic">"{quote}"</p>
       <div>
         <p className="font-semibold text-white">{author}</p>
-        <p className="text-gray-400 text-sm">{role}</p>
+        <p className="text-white text-sm">{role}</p>
       </div>
     </div>
   )
@@ -366,25 +389,13 @@ function StarRating({ rating }) {
   )
 }
 
-function SocialIcon({ icon }) {
-  return (
-    <a
-      href="#"
-      className="w-10 h-10 rounded-full bg-dream-card-bg border border-dream-glass-border flex items-center justify-center hover:border-dream-purple transition-colors"
-    >
-      <span className="sr-only">{icon}</span>
-      <div className="w-5 h-5 bg-dream-purple rounded-full opacity-70 hover:opacity-100 transition-opacity"></div>
-    </a>
-  )
-}
-
 function PricingFeature({ children, included = false }) {
   return (
     <li className="flex items-start">
       <div className={`mr-2 mt-1 ${included ? "text-dream-purple" : "text-gray-600"}`}>
         {included ? <CheckIcon className="h-4 w-4" /> : <XIcon className="h-4 w-4" />}
       </div>
-      <span className={included ? "text-gray-300" : "text-gray-500"}>{children}</span>
+      <span className={included ? "text-white" : "text-gray-500"}>{children}</span>
     </li>
   )
 }

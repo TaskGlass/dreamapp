@@ -14,19 +14,34 @@ if (
   )
 }
 
-const inter = Inter({ subsets: ["latin"] })
+// Optimize font loading
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap", // Ensures text remains visible during font loading
+  preload: true,
+  fallback: ["system-ui", "sans-serif"],
+})
 
 export const metadata = {
   title: "DreamSage - Dream Interpretation & Subconscious Healing",
   description: "Record, interpret, and transform your dreams into meaningful insights for personal growth and healing.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  themeColor: "#131320",
     generator: 'v0.dev'
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+
+        {/* Add preload for critical assets */}
+        <link rel="preload" as="font" href="/fonts/inter.woff2" type="font/woff2" crossOrigin="anonymous" />
+      </head>
       <body className={`${inter.className} dream-bg`}>
-        <ThemeProvider attribute="class" defaultTheme="dark">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <AuthProvider>
             {children}
             <Toaster />

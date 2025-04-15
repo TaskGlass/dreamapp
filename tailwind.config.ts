@@ -8,11 +8,22 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
+  future: {
+    hoverOnlyWhenSupported: true, // Better performance on mobile
+  },
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1.5rem",
+        lg: "2rem",
+      },
       screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
         "2xl": "1400px",
       },
     },
@@ -87,6 +98,10 @@ const config: Config = {
           "0%, 100%": { opacity: "0.6" },
           "50%": { opacity: "1" },
         },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -94,11 +109,23 @@ const config: Config = {
         float: "float 6s ease-in-out infinite",
         "float-slow": "float 8s ease-in-out infinite",
         "pulse-glow": "pulse-glow 4s ease-in-out infinite",
+        shimmer: "shimmer 2s infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "dream-gradient": "linear-gradient(to right, #8b5cf6, #6366f1, #ec4899)",
+      },
+      // Optimize touch targets for mobile
+      spacing: {
+        touch: "44px",
+      },
+      // Add safe-area insets for notched devices
+      padding: {
+        safe: "env(safe-area-inset-bottom)",
+      },
+      height: {
+        "screen-safe": "calc(100vh - env(safe-area-inset-bottom))",
       },
     },
   },

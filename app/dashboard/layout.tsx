@@ -16,6 +16,7 @@ import {
   SparklesIcon,
   PlusIcon,
   XIcon,
+  LibraryIcon,
 } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -102,7 +103,7 @@ export default function DashboardLayout({ children }) {
                         />
                         <MobileNavItem
                           href="/dashboard/library"
-                          icon={<BookIcon className="h-5 w-5" />}
+                          icon={<LibraryIcon className="h-5 w-5" />}
                           label="Dream Library"
                           active={pathname === "/dashboard/library"}
                           onClick={() => setIsMobileMenuOpen(false)}
@@ -138,7 +139,9 @@ export default function DashboardLayout({ children }) {
                         </div>
                         <div>
                           <p className="text-sm font-medium text-white">{user.name}</p>
-                          <p className="text-xs text-gray-400">{user.email}</p>
+                          <p className="text-xs text-white">
+                            {user.is_subscribed ? "Premium Plan" : `${user.dream_credits} credits left`}
+                          </p>
                         </div>
                       </div>
                       <Button
@@ -211,7 +214,7 @@ export default function DashboardLayout({ children }) {
               />
               <NavItem
                 href="/dashboard/library"
-                icon={<BookIcon className="h-5 w-5" />}
+                icon={<LibraryIcon className="h-5 w-5" />}
                 label="Dream Library"
                 active={pathname === "/dashboard/library"}
               />
@@ -239,7 +242,7 @@ export default function DashboardLayout({ children }) {
           <div className="mt-auto p-4 border-t border-dream-glass-border">
             <div className="glass-card p-4">
               <h4 className="font-medium text-dream-purple mb-2">Dream Tip</h4>
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-white">
                 Keep a notepad by your bed to record dreams immediately upon waking for the most accurate recall.
               </p>
             </div>
@@ -247,8 +250,10 @@ export default function DashboardLayout({ children }) {
             {!user.isSubscribed && (
               <div className="mt-4 glass-card p-4 border-dream-purple">
                 <h4 className="font-medium text-dream-purple mb-2">Free Plan</h4>
-                <p className="text-sm text-gray-300 mb-2">You have 1 dream interpretation per day.</p>
-                <Button size="sm" className="w-full glass-button-primary" onClick={() => router.push("/")}>
+                <p className="text-sm text-white mb-2">
+                  You have {user.dream_credits} dream {user.dream_credits === 1 ? "credit" : "credits"} remaining.
+                </p>
+                <Button size="sm" className="w-full glass-button-primary" onClick={() => router.push("/pricing")}>
                   Upgrade Plan
                 </Button>
               </div>
@@ -267,7 +272,7 @@ function NavItem({ href, icon, label, active }) {
     <Link
       href={href}
       className={`flex items-center px-3 py-2 rounded-md transition-colors ${
-        active ? "bg-dream-purple/20 text-white" : "text-gray-300 hover:bg-dream-purple/10 hover:text-white"
+        active ? "bg-dream-purple/20 text-white" : "text-white hover:bg-dream-purple/10 hover:text-white"
       }`}
     >
       <span className={`mr-3 ${active ? "text-dream-purple" : "text-gray-400"}`}>{icon}</span>
@@ -281,7 +286,7 @@ function MobileNavItem({ href, icon, label, active, onClick }) {
     <Link
       href={href}
       className={`flex items-center px-3 py-2 rounded-md transition-colors ${
-        active ? "bg-dream-purple/20 text-white" : "text-gray-300 hover:bg-dream-purple/10 hover:text-white"
+        active ? "bg-dream-purple/20 text-white" : "text-white hover:bg-dream-purple/10 hover:text-white"
       }`}
       onClick={onClick}
     >

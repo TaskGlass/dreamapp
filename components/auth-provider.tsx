@@ -128,6 +128,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error, user: null }
       }
 
+      // Update the user's dream credits to 3 when they sign up
+      if (data.user) {
+        await supabase.from("profiles").update({ dream_credits: 3 }).eq("id", data.user.id)
+      }
+
       return { error: null, user: data.user }
     } catch (error) {
       return { error, user: null }
