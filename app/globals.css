@@ -336,11 +336,13 @@ button {
 }
 
 .glass-input {
-  @apply bg-dream-card-bg border border-dream-glass-border text-white placeholder:text-gray-400 focus:border-dream-purple focus:ring-2 focus:ring-dream-purple/30 focus:ring-offset-2 focus:ring-offset-dream-dark-blue;
+  @apply bg-dream-card-bg backdrop-blur-md border border-dream-glass-border rounded-lg px-4 py-2 text-white;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.glass-button-primary {
-  @apply bg-dream-purple text-white hover:bg-dream-purple/90 focus:ring-2 focus:ring-dream-purple/30 focus:ring-offset-2 focus:ring-offset-dream-dark-blue;
+.glass-input:focus {
+  @apply outline-none border-dream-glass-highlight;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
 }
 
 /* Optimize shimmer effect for better performance */
@@ -610,6 +612,133 @@ footer {
 
 /* Add these styles at the end of the file for improved mobile date picker */
 
+/* Shadow glow effect for selected elements */
+.shadow-glow {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+}
+
+/* Enhanced calendar day styling */
+.rdp-day {
+  position: relative;
+  overflow: hidden;
+}
+
+.rdp-day_selected::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.8) 0%, rgba(139, 92, 246, 0.6) 100%);
+  z-index: -1;
+  border-radius: 50%;
+  transform: scale(0.9);
+  transition: transform 0.2s ease;
+}
+
+.rdp-day_selected:hover::before {
+  transform: scale(1);
+}
+
+/* Pulse animation for today's date */
+.rdp-day_today {
+  position: relative;
+}
+
+.rdp-day_today::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid rgba(99, 102, 241, 0.6);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(99, 102, 241, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+/* Enhanced hover effects for calendar navigation */
+.rdp-nav_button:hover {
+  background-color: rgba(139, 92, 246, 0.3) !important;
+  transform: scale(1.1);
+}
+
+/* Improved month caption */
+.rdp-caption {
+  position: relative;
+}
+
+.rdp-caption_label {
+  background: linear-gradient(90deg, #8b5cf6, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700 !important;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .rdp-day {
+    font-size: 16px !important;
+  }
+
+  .rdp-head_cell {
+    font-size: 14px !important;
+  }
+
+  .rdp-caption_label {
+    font-size: 18px !important;
+  }
+}
+
+/* Improved focus states for accessibility */
+.rdp-button:focus:not([disabled]) {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.6);
+  position: relative;
+  z-index: 1;
+}
+
+/* Transition effects for smoother interactions */
+.rdp-day,
+.rdp-nav_button,
+.rdp-button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Improved calendar container */
+[data-radix-popper-content-wrapper] {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Mobile optimized calendar */
 @media (max-width: 768px) {
   .rdp {
@@ -686,7 +815,7 @@ footer {
 
 /* Improved popover positioning for date picker */
 [data-radix-popper-content-wrapper] {
-  @apply z-50;
+  z-index: 50 !important; /* Ensure it's above other elements */
 }
 
 /* Add a subtle animation to the date picker */
@@ -873,45 +1002,298 @@ main > *:last-child {
   margin-bottom: 0;
 }
 
-/* Calendar specific styles */
-.glass-input {
-  @apply bg-dream-card-bg border border-dream-glass-border text-white placeholder:text-gray-400 focus:border-dream-purple focus:ring-2 focus:ring-dream-purple/30 focus:ring-offset-2 focus:ring-offset-dream-dark-blue;
+/* Add these styles to your globals.css file for the enhanced date picker */
+
+/* Shadow glow effect for selected elements */
+.shadow-glow {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
 }
 
-.glass-button-primary {
-  @apply bg-dream-purple text-white hover:bg-dream-purple/90 focus:ring-2 focus:ring-dream-purple/30 focus:ring-offset-2 focus:ring-offset-dream-dark-blue;
-}
-
-/* Calendar popover styles */
-[data-radix-popper-content-wrapper] {
-  @apply z-50;
-}
-
-/* Calendar day styles */
-.rdp-day_selected {
-  @apply bg-dream-purple text-white hover:bg-dream-purple/90;
-}
-
-.rdp-day_today {
-  @apply bg-dream-blue/30 text-white font-bold border border-dream-blue;
-}
-
+/* Enhanced calendar day styling */
 .rdp-day {
-  @apply text-white hover:bg-dream-purple/20;
+  position: relative;
+  overflow: hidden;
 }
 
-.rdp-button:hover:not([disabled]) {
-  @apply bg-dream-purple/20;
+.rdp-day_selected::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.8) 0%, rgba(139, 92, 246, 0.6) 100%);
+  z-index: -1;
+  border-radius: 50%;
+  transform: scale(0.9);
+  transition: transform 0.2s ease;
 }
 
-.rdp-nav_button {
-  @apply text-white hover:bg-dream-purple/20;
+.rdp-day_selected:hover::before {
+  transform: scale(1);
+}
+
+/* Pulse animation for today's date */
+.rdp-day_today {
+  position: relative;
+}
+
+.rdp-day_today::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid rgba(99, 102, 241, 0.6);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(99, 102, 241, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+/* Enhanced hover effects for calendar navigation */
+.rdp-nav_button:hover {
+  background-color: rgba(139, 92, 246, 0.3) !important;
+  transform: scale(1.1);
+}
+
+/* Improved month caption */
+.rdp-caption {
+  position: relative;
 }
 
 .rdp-caption_label {
-  @apply text-white font-bold;
+  background: linear-gradient(90deg, #8b5cf6, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700 !important;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .rdp-day {
+    font-size: 16px !important;
+  }
+
+  .rdp-head_cell {
+    font-size: 14px !important;
+  }
+
+  .rdp-caption_label {
+    font-size: 18px !important;
+  }
+}
+
+/* Improved focus states for accessibility */
+.rdp-button:focus:not([disabled]) {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.6);
+  position: relative;
+  z-index: 1;
+}
+
+/* Transition effects for smoother interactions */
+.rdp-day,
+.rdp-nav_button,
+.rdp-button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Improved calendar container */
+[data-radix-popper-content-wrapper] {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optimize loading states */
+.loading-skeleton {
+  @apply bg-dream-card-bg animate-pulse rounded;
+}
+
+/* Optimize mobile navigation */
+.mobile-nav-item {
+  @apply flex items-center px-4 py-3 text-white hover:bg-dream-purple/10 rounded-md transition-colors;
+}
+
+/* Improve mobile dialog */
+.mobile-dialog {
+  @apply fixed inset-0 z-50 bg-dream-dark-blue/95 backdrop-blur-md p-4 overflow-y-auto;
+}
+
+/* Optimize transitions */
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optimize for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Add these styles to the end of the file to enhance the calendar appearance */
+
+/* Enhanced calendar styling */
+.rdp {
+  --rdp-cell-size: 40px !important;
+  --rdp-accent-color: theme("colors.dream.purple") !important;
+  --rdp-background-color: theme("colors.dream.dark-blue") !important;
+  margin: 0 !important;
+}
+
+.rdp-months {
+  justify-content: center !important;
+}
+
+.rdp-month {
+  background-color: transparent !important;
+  border-radius: 8px !important;
+}
+
+.rdp-table {
+  margin: 0 auto !important;
+  max-width: 100% !important;
 }
 
 .rdp-head_cell {
-  @apply text-gray-400 font-medium;
+  font-weight: 500 !important;
+  color: theme("colors.white") !important;
+  text-transform: uppercase !important;
+  font-size: 0.8rem !important;
+  padding: 0.75rem 0 !important;
+  text-align: center !important;
+}
+
+.rdp-cell {
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+.rdp-day {
+  margin: auto !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.rdp-day:hover {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+}
+
+.rdp-day_selected {
+  background-color: theme("colors.dream.purple") !important;
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+.rdp-day_today {
+  border: 1px solid theme("colors.dream.blue") !important;
+  background-color: rgba(99, 102, 241, 0.2) !important;
+  font-weight: bold !important;
+}
+
+.rdp-button:hover:not([disabled]) {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+}
+
+.rdp-nav_button {
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 0.5rem !important;
+}
+
+.rdp-caption_label {
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  color: white !important;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .rdp {
+    --rdp-cell-size: 48px !important;
+  }
+
+  .rdp-head_cell {
+    font-size: 0.9rem !important;
+    padding: 1rem 0 !important;
+  }
+
+  .rdp-caption_label {
+    font-size: 1.1rem !important;
+  }
+
+  .rdp-nav_button {
+    padding: 0.75rem !important;
+  }
+}
+
+/* Add these styles to fix the footer positioning */
+
+/* Fix footer positioning to prevent empty space below */
+.h-screen.overflow-auto {
+  display: flex;
+  flex-direction: column;
+}
+
+.h-screen.overflow-auto > main {
+  flex: 1 0 auto;
+}
+
+.h-screen.overflow-auto > footer {
+  flex-shrink: 0;
+}
+
+/* Remove any bottom margin from the last element in the main content */
+main > *:last-child {
+  margin-bottom: 0;
 }

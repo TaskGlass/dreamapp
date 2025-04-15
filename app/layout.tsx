@@ -1,6 +1,5 @@
-import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
+import "./globals.css"
+import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth-provider"
 import { Toaster } from "@/components/ui/toaster"
@@ -16,33 +15,24 @@ if (
 }
 
 // Optimize font loading
-const inter = Inter({ 
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-  preload: true
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap", // Ensures text remains visible during font loading
+  preload: true,
+  fallback: ["system-ui", "sans-serif"],
 })
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: '#000000'
+export const metadata = {
+  title: "DreamSage - Dream Interpretation & Subconscious Healing",
+  description: "Record, interpret, and transform your dreams into meaningful insights for personal growth and healing.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  themeColor: "#131320",
+    generator: 'v0.dev'
 }
 
-export const metadata: Metadata = {
-  title: 'DreamSage',
-  description: 'Your personal dream interpretation assistant',
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className="scroll-smooth">
       <head>
         {/* Preconnect to external domains */}
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
@@ -50,13 +40,8 @@ export default function RootLayout({
         {/* Add preload for critical assets */}
         <link rel="preload" as="font" href="/fonts/inter.woff2" type="font/woff2" crossOrigin="anonymous" />
       </head>
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
+      <body className={`${inter.className} dream-bg`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <AuthProvider>
             {children}
             <Toaster />

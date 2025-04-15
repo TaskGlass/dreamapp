@@ -54,14 +54,3 @@ export type Interpretation = {
   actions: string[]
   created_at: string
 }
-
-// Function to ensure profiles table exists
-export async function ensureProfilesTable() {
-  const { error } = await supabase.rpc('ensure_profiles_table')
-  if (error) {
-    console.error('Error ensuring profiles table:', error)
-  }
-}
-
-// Call this function when the app starts
-ensureProfilesTable()
