@@ -207,7 +207,21 @@ export default function DashboardInterpretPage() {
               <Label htmlFor="date" className="text-white text-base">
                 Date of Dream <span className="text-dream-pink">*</span>
               </Label>
-              <DreamDatePicker date={dreamData.date} onDateChange={handleDateChange} />
+              <Input
+                id="date"
+                name="date"
+                type="date"
+                value={dreamData.date ? dreamData.date.toISOString().split('T')[0] : ''}
+                onChange={e => handleDateChange(new Date(e.target.value))}
+                required
+                className={"glass-input date-input-dream " + (errors.date ? "border-red-500" : "")}
+              />
+              {errors.date && (
+                <div className="text-red-500 text-sm flex items-center mt-1">
+                  <AlertCircle className="h-3 w-3 mr-1" />
+                  {errors.date}
+                </div>
+              )}
             </div>
 
             <div className="space-y-3">
