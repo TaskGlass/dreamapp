@@ -1,27 +1,25 @@
-// This file is only used on the server
-import "server-only"
 import OpenAI from "openai"
 
-// Create a function to get a new OpenAI client for each request
-export function getOpenAIClient() {
+// Initialize the OpenAI client
+const getOpenAIClient = () => {
+  // Check if API key exists
   const apiKey = process.env.OPENAI_API_KEY
 
   if (!apiKey) {
-    throw new Error("OpenAI API key is missing. Please add OPENAI_API_KEY to your environment variables.")
+    throw new Error("OpenAI API key is missing")
   }
 
   return new OpenAI({
-    apiKey,
+    apiKey: apiKey,
   })
 }
 
-// Dream interpretation function
 export async function generateDreamInterpretation(dreamContent: string, dreamEmotion: string, dreamClarity: string) {
   try {
-    // Create a new client for this request
+    // Create the OpenAI client
     const openai = getOpenAIClient()
 
-    console.log("Using OpenAI API for dream interpretation")
+    console.log("Using OpenAI for dream interpretation")
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -46,9 +44,10 @@ export async function generateDreamInterpretation(dreamContent: string, dreamEmo
       response_format: { type: "json_object" },
       temperature: 0.7,
       max_tokens: 1000,
+      timeout: 15000, // 15 second timeout
     })
 
-    // Parse and validate the response
+    // Parse the JSON response
     const content = response.choices[0]?.message?.content
     if (!content) {
       throw new Error("Empty response from OpenAI")

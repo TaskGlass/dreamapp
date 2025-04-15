@@ -493,6 +493,7 @@
   @apply bg-dream-dark-blue border-none p-3;
 }
 
+/* Add these styles for the dream calendar */
 .dream-calendar .rdp-months {
   @apply bg-dream-dark-blue;
 }

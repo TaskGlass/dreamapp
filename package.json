@@ -59,12 +59,10 @@
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
     "ws": "latest",
-    "@emotion/is-prop-valid": "latest",
-    "@supabase/supabase-js": "latest",
     "stripe": "latest",
     "openai": "latest",
-    "server-only": "latest",
-    "framer-motion": "latest"
+    "@supabase/supabase-js": "latest",
+    "server-only": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

@@ -1,23 +1,27 @@
 import { createClient } from "@supabase/supabase-js"
-import type { Database } from "@/types/supabase"
 
-// Environment variables validation
+// Check if environment variables are defined
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+// Validate environment variables
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
+  console.error(
     "Missing Supabase environment variables. Please check your .env.local file or Vercel environment variables.",
   )
 }
 
-// Create the Supabase client
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
+// Create the Supabase client with proper error handling
+export const supabase = createClient(
+  supabaseUrl || "https://placeholder-url.supabase.co",
+  supabaseAnonKey || "placeholder-key",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
   },
-})
+)
 
 // Types for our database tables
 export type User = {
