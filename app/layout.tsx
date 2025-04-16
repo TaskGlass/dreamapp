@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { ReactNode } from "react"
 
 // Check if Supabase environment variables are set
 if (
@@ -30,9 +31,9 @@ export const metadata = {
     generator: 'v0.dev'
 }
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth dark" style={{ colorScheme: 'dark' }}>
       <head>
         {/* Preconnect to external domains */}
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
