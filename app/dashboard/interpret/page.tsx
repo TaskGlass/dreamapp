@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -24,23 +24,13 @@ export default function DashboardInterpretPage() {
     content: "",
     emotion: "",
   })
-  const [dreamData, setDreamData] = useState<{
-    title: string;
-    date: Date | null;
-    content: string;
-    emotion: string;
-    clarity: string;
-  }>({
+  const [dreamData, setDreamData] = useState({
     title: "",
-    date: null,
+    date: new Date(),
     content: "",
     emotion: "",
     clarity: "medium",
   })
-
-  useEffect(() => {
-    setDreamData((prev) => ({ ...prev, date: new Date() }))
-  }, [])
 
   // Progress bar animation
   const startProgressAnimation = () => {
@@ -57,25 +47,25 @@ export default function DashboardInterpretPage() {
     return interval
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target
     setDreamData((prev) => ({ ...prev, [name]: value }))
 
     // Clear error when user types
-    if ((errors as any)[name]) {
+    if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }))
     }
   }
 
-  const handleDateChange = (date: Date | null) => {
+  const handleDateChange = (date) => {
     setDreamData((prev) => ({ ...prev, date: date || new Date() }))
   }
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name, value) => {
     setDreamData((prev) => ({ ...prev, [name]: value }))
 
     // Clear error when user selects
-    if ((errors as any)[name]) {
+    if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }))
     }
   }
@@ -110,7 +100,7 @@ export default function DashboardInterpretPage() {
     return isValid
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (!user) {
@@ -127,15 +117,6 @@ export default function DashboardInterpretPage() {
       toast({
         title: "Missing information",
         description: "Please fill out all required fields correctly",
-        variant: "destructive",
-      })
-      return
-    }
-
-    if (!dreamData.date) {
-      toast({
-        title: "Missing date",
-        description: "Please select a date for your dream.",
         variant: "destructive",
       })
       return
@@ -226,15 +207,7 @@ export default function DashboardInterpretPage() {
               <Label htmlFor="date" className="text-white text-base">
                 Date of Dream <span className="text-dream-pink">*</span>
               </Label>
-              <Input
-                id="date"
-                name="date"
-                type="date"
-                value={dreamData.date ? dreamData.date.toISOString().split('T')[0] : ''}
-                onChange={e => handleDateChange(e.target.value ? new Date(e.target.value) : null)}
-                required
-                className={"glass-input date-input-dream"}
-              />
+              <DreamDatePicker date={dreamData.date} onDateChange={handleDateChange} />
             </div>
 
             <div className="space-y-3">
